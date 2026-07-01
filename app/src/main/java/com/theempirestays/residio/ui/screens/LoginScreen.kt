@@ -56,7 +56,7 @@ fun LoginScreen(onLoggedIn: (User) -> Unit) {
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Icon(Icons.Filled.Google, null, Modifier.size(20.dp),
+                Icon(Icons.Filled.AccountCircle, null, Modifier.size(20.dp),
                     tint = Color(0xFFDB4437))
                 Spacer(Modifier.width(10.dp))
                 Text("Continue with Google", fontSize = 15.sp, fontWeight = FontWeight.Medium)

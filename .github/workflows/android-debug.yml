@@ -46,12 +46,12 @@ jobs:
           if-no-files-found: error
 
       - name: Publish APK to a permanent GitHub Release
-        # Free, no subscription, never expires. Updates the "latest-debug" release
+        # Free, no subscription, never expires. Updates the "latest-debug-hospitality" release
         # in place on every push to main, so the download link is always stable:
         # https://github.com/theempirestayys/residio-sample-01/releases/latest
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest-debug
+          tag_name: latest-debug-hospitality
           name: Residio Owner — latest debug build
           prerelease: true
           files: app/build/outputs/apk/debug/app-debug.apk

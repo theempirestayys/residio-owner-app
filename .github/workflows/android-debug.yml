@@ -1,0 +1,70 @@
+name: Build Debug APK (installable today)
+
+# Builds an unsigned, installable debug APK on every push to main (and on demand).
+# No secrets, no keystore, no Play Console needed. Download the APK from the run's
+# "Artifacts" section and install it on any Android phone (enable "install unknown apps").
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'release/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write          # lets the built-in GITHUB_TOKEN publish a Release
+
+jobs:
+  debug-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle 8.7 (no committed wrapper jar needed)
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon
+
+      - name: Upload installable APK (90-day build artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: residio-owner-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Publish APK to a permanent GitHub Release
+        # Free, no subscription, never expires. Updates the "latest-debug" release
+        # in place on every push to main, so the download link is always stable:
+        # https://github.com/theempirestayys/residio-sample-01/releases/latest
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-debug
+          name: Residio Owner — latest debug build
+          prerelease: true
+          files: app/build/outputs/apk/debug/app-debug.apk
+          body: >
+            Installable debug APK built from `main`. Download `app-debug.apk`,
+            open it on an Android phone, allow "install from unknown apps".
+            Demo login: master / residio@master
+
+      - name: Notify Make.com — Deploy Notifier (WhatsApp)
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          curl -s -X POST "https://hook.eu1.make.com/25iqjsc4ks74pi0mi4zbbrufly99opwt" \
+            -H "Content-Type: application/json" \
+            -d "{\"status\":\"$STATUS\",\"apk_url\":\"https://github.com/theempirestayys/residio-sample-01/releases/latest\",\"branch\":\"$GITHUB_REF_NAME\",\"commit\":\"$GITHUB_SHA\",\"workflow\":\"android-debug\"}" \
+            || true

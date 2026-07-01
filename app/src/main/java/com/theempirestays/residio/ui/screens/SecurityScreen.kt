@@ -108,7 +108,7 @@ fun SecurityScreen(user: User) {
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
                     Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Filled.Google, null, Modifier.size(20.dp),
+                        Icon(Icons.Filled.AccountCircle, null, Modifier.size(20.dp),
                             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
